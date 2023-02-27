@@ -4,6 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter/material.dart';
+import 'heart_rate_server.dart';
 
 class HeartRateScreen extends StatefulWidget {
   @override
@@ -11,6 +12,7 @@ class HeartRateScreen extends StatefulWidget {
 }
 
 class _HeartRateScreenState extends State<HeartRateScreen> {
+  final HeartRateServer server = HeartRateServer(port: 8080);
   StreamSubscription? _scanSubscription;
   StreamSubscription? _connectionSubscription;
   StreamSubscription<List<int>>? _heartRateSubscription;
@@ -24,7 +26,7 @@ class _HeartRateScreenState extends State<HeartRateScreen> {
   @override
   void initState() {
     super.initState();
-
+    server.start();
     // Start scanning for devices when the screen is initialized
     print('Starting scan');
     _startScan();
@@ -81,6 +83,7 @@ class _HeartRateScreenState extends State<HeartRateScreen> {
               setState(() {
                 _heartRate = heartRate;
                 _heartRates.add(heartRate);
+                server.addHeartRate(heartRate);
               });
               print('After setting state, _heartRate = $_heartRate');
             });
@@ -185,8 +188,8 @@ titlesData: FlTitlesData(
 
 
 
-    minY: 55,
-    maxX: 80,
+    minY: 40,
+    maxX: 120,
     gridData: FlGridData(
       show: true,
       horizontalInterval: 20,
